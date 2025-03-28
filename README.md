@@ -1,19 +1,15 @@
 # Developing a Neural Network Regression Model
 
-## AIM :
-
+## AIM
 To develop a neural network regression model for the given dataset.
 
-## THEORY :
-
+## THEORY
 Regression problems involve predicting a continuous output variable based on input features. Traditional linear regression models often struggle with complex patterns in data. Neural networks, specifically feedforward neural networks, can capture these complex relationships by using multiple layers of neurons and activation functions. In this experiment, a neural network model is introduced with a single linear layer that learns the parameters weight and bias using gradient descent.
 
-## Neural Network Model :
-
+## Neural Network Model
 Include the neural network model diagram.
 
-## DESIGN STEPS :
-
+## DESIGN STEPS
 ### STEP 1: Generate Dataset
 
 Create input values  from 1 to 50 and add random noise to introduce variations in output values .
@@ -42,93 +38,76 @@ Plot the original dataset along with the learned linear model.
 
 Use the trained model to predict  for a new input value .
 
-## PROGRAM :
+## PROGRAM
 
-### NAME: MOHAMED NADHEEM N
+### Name: Jesubalan A
 
-### REG NO:212223240091
+### Register Number: 212223240060
 
 ```python
 import torch
-import torch.nn as nn  # Neural network module
+import torch.nn as nn
 import numpy as np
-import matplotlib.pyplot as plt  # For plotting
+import matplotlib.pyplot as plt
 %matplotlib inline
 
 X = torch.linspace(1,70,70).reshape(-1,1)
 
-torch.manual_seed(71) # to obtain reproducible results
+torch.manual_seed(71)
 e = torch.randint(-8,9,(70,1),dtype=torch.float)
 
 y = 2*X + 1 + e
 print(y.shape)
 
-plt.scatter(X.numpy(), y.numpy(),color='red') 
+plt.scatter(X.numpy(), y.numpy(),color='red')  # Scatter plot of data points
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Generated Data for Linear Regression')
 plt.show()
 
-# Setting a manual seed for reproducibility
 torch.manual_seed(59)
+model = nn.Linear(1, 1)
+print('Weight:', model.weight.item())
+print('Bias:  ', model.bias.item())
 
-# Defining the model class
-class Model(nn.Module):
-    def __init__(self, in_features, out_features):
-        super().__init__()
-        self.linear = nn.Linear(in_features, out_features)
-        
-    def forward(self, x):
-        y_pred = self.linear(x)
-        return y_pred
+loss_function = nn.MSELoss()
 
-# Creating an instance of the model
-torch.manual_seed(59)
-model = Model(1, 1)
-print('Weight:', model.linear.weight.item())
-print('Bias:  ', model.linear.bias.item())
+optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)
 
-loss_function = nn.MSELoss()  # Mean Squared Error (MSE) loss
+epochs = 50
+losses = []
 
-optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)  # Stochastic Gradient Descent
+for epoch in range(1, epochs + 1):
+    optimizer.zero_grad()
+    y_pred = model(X)
+    loss = loss_function(y_pred, y)
+    losses.append(loss.item())
 
-epochs = 50  # Number of training iterations
-losses = []  # List to store loss values
+    loss.backward()
+    optimizer.step()
 
-for epoch in range(1, epochs + 1):  # Start from 1 to 50
-    optimizer.zero_grad()  # Clear previous gradients
-    y_pred = model(X)  # Forward pass
-    loss = loss_function(y_pred, y)  # Compute loss
-    losses.append(loss.item())  # Store loss value
-    
-    loss.backward()  # Compute gradients
-    optimizer.step()  # Update weights
 
-    # Print loss, weight, and bias for EVERY epoch (1 to 50)
     print(f'epoch: {epoch:2}  loss: {loss.item():10.8f}  '
-          f'weight: {model.linear.weight.item():10.8f}  '
-          f'bias: {model.linear.bias.item():10.8f}')
+          f'weight: {model.weight.item():10.8f}  '
+          f'bias: {model.bias.item():10.8f}')
 
 plt.plot(range(epochs), losses)
 plt.ylabel('Loss')
 plt.xlabel('epoch');
 plt.show()
 
-# Automatically determine x-range
 x1 = torch.tensor([X.min().item(), X.max().item()])
 
-# Extract model parameters
-w1, b1 = model.linear.weight.item(), model.linear.bias.item()
 
-# Compute y1 (predicted values)
+w1, b1 = model.weight.item(), model.bias.item()
+
+
 y1 = x1 * w1 + b1
 
-# Print weight, bias, and x/y values
 print(f'Final Weight: {w1:.8f}, Final Bias: {b1:.8f}')
 print(f'X range: {x1.numpy()}')
 print(f'Predicted Y values: {y1.numpy()}')
 
-# Plot original data and best-fit line
 plt.scatter(X.numpy(), y.numpy(), label="Original Data")
 plt.plot(x1.numpy(), y1.numpy(), 'r', label="Best-Fit Line")
 plt.xlabel('x')
@@ -137,18 +116,30 @@ plt.title('Trained Model: Best-Fit Line')
 plt.legend()
 plt.show()
 
+torch.save(model.state_dict(), 'model.pt')
+
+
+
 ```
 
-### Dataset Information :
+### Dataset Information
 Include screenshot of the generated data
 
-### OUTPUT :
+### OUTPUT
 Training Loss Vs Iteration Plot
 Best Fit line plot
 Include your plot here
+![image](https://github.com/user-attachments/assets/3b54af2a-1dd1-49b3-8417-bb0d91a82b97)
 
-### New Sample Data Prediction :
+![image](https://github.com/user-attachments/assets/8a1448a4-df1a-4679-939a-e459a9992197)
+
+![image](https://github.com/user-attachments/assets/574f14ee-c004-4b87-909e-5b4b7afce5b4)
+
+
+
+
+### New Sample Data Prediction
 Include your sample input and output here
 
-## RESULT :
+## RESULT
 Thus, a neural network regression model was successfully developed and trained using PyTorch.
